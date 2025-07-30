@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Spotify Song Preview</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 20px; }
+    input, button { padding: 10px; font-size: 16px; margin-top: 10px; }
+    audio { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>🎧 Spotify Song Preview</h2>
+  <input type="text" id="trackId" placeholder="Enter Spotify Track ID">
+  <button onclick="getPreview()">Get Preview</button>
+  <div id="info"></div>
+  <audio id="audio" controls></audio>
+
+  <script>
+    function getPreview() {
+      const trackId = document.getElementById('trackId').value;
+      const url = `https://spotify23.p.rapidapi.com/tracks/?ids=${trackId}`;
+
+      const options = {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': 'your_api_key_here', // Replace with actual key
+          'X-RapidAPI-Host': 'spotify23.p.rapidapi.com'
+        }
+      };
+
+      fetch(url, options)
+        .then(res => res.json())
+        .then(data => {
+          const track = data.tracks[0];
+          document.getElementById("info").innerHTML =
+            `<h3>${track.name}</h3><p>by ${track.artists[0].name}</p>`;
+          
+          if (track.preview_url) {
+            document.getElementById("audio").src = track.preview_url;
+          } else {
+            document.getElementById("audio").src = "";
+            alert("No preview available for this track.");
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Something went wrong. Check the Track ID or your API key.");
+        });
+    }
+  </script>
+</body>
+</html>
